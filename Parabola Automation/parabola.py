@@ -4,13 +4,15 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.action_chains import ActionChains
 import time
 
-# Get the flow name from the command-line argument
-if len(sys.argv) < 2:
-    print("Please provide the flow name as an argument.")
+# Get the flow name and file path from command-line arguments
+if len(sys.argv) < 3:
+    print("Please provide the flow name and file path as arguments.")
     sys.exit(1)
 
 flow_name = sys.argv[1]
-print(f"Flow name received: {flow_name}")
+file_path = sys.argv[2]
+print(f"Flow name: {flow_name}")
+print(f"File path: {file_path}")
 
 # Set up the Chrome WebDriver
 print("Initializing WebDriver...")
@@ -25,13 +27,11 @@ try:
 
     # Log in to Parabola using email and password
     print("Using email and password login...")
-    email_field = browser.find_element(By.XPATH, "//input[@placeholder='you@company.com']")  # Locate the email field by its placeholder
-    password_field = browser.find_element(By.XPATH, "//input[@type='password']")  # Locate the password field by its type
-    login_button = browser.find_element(By.XPATH, "//button[contains(text(), 'Sign in')]")  # Locate the sign-in button by its text
-    # CREDENTIALS
+    email_field = browser.find_element(By.XPATH, "//input[@placeholder='you@company.com']")
+    password_field = browser.find_element(By.XPATH, "//input[@type='password']")
+    login_button = browser.find_element(By.XPATH, "//button[contains(text(), 'Sign in')]")
     email = "rbucksimiar@gmail.com"
     password = "Raaed123#"
-
     email_field.send_keys(email)
     password_field.send_keys(password)
     login_button.click()
@@ -46,43 +46,53 @@ try:
     flow_link = browser.find_element(By.XPATH, f"//a[text()='{flow_name}']")
     flow_link.click()
     print(f"Clicked on the '{flow_name}' link.")
-    time.sleep(2)  # Wait for navigation to the next page
+    time.sleep(2)
 
-    # Locate the deepest interactive element
+        # Locate the deepest interactive element
+
     print("Locating the deeper inner element to click...")
+
     deepest_element = browser.find_element(By.XPATH, "//div[@class='css-1q4vvn7']")  # Refined XPath for deeper targeting
 
+
+
     # Perform the click action
+
     print("Performing a click on the deeper element...")
+
     actions = ActionChains(browser)
+
     actions.click(deepest_element).perform()
+
     time.sleep(1)
+
     print("Click on the deeper element completed.")
 
+
+
     # Perform a double-click action to ensure interaction
+
     print("Performing a double-click on the deeper element...")
+
     actions.double_click(deepest_element).perform()
+
     print("Double-click on the deeper element completed.")
 
+
+
     # Delay before ending the script to observe changes
+
     time.sleep(3)
 
     # Locate the file upload input element dynamically
     print("Locating the file upload input element...")
     file_input = browser.find_element(By.XPATH, "//div[contains(@class, 'css-1i2ya67')]//input[@type='file']")
-
-    # Click on the file upload input using ActionChains
-    print("Clicking the file upload input element...")
-    actions = ActionChains(browser)
-    actions.move_to_element(file_input).click().perform()
-    print("File upload input clicked.")
     time.sleep(10)
-
-    # Upload a file
-    file_path = r"C:\\Users\\developer_fitsexpres\\Downloads\\SampleCSVFile_2kb.csv"  # Replace with the correct file path
+    # Upload the file
     print(f"Uploading file: {file_path}")
     file_input.send_keys(file_path)
     print("File uploaded successfully.")
+    time.sleep(5)
 
     time.sleep(10)
 except Exception as e:

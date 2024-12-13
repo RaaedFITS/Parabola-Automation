@@ -53,7 +53,8 @@
         const filePickerButton = document.getElementById('filePickerButton');
         const dropzone = document.getElementById('dropzone');
         const fileNameDisplay = document.getElementById('fileName');
-        const uploadButton = document.getElementById('uploadButton');
+
+        let selectedFile = null;
 
         async function fetchFlows() {
             try {
@@ -94,44 +95,23 @@
             }
         }
 
-        flowSelection.addEventListener('change', function () {
-            if (flowSelection.value !== "Choose a flow") {
-                okButton.disabled = false;
-            }
-        });
-
-           okButton.addEventListener('click', async function () {
-        const selectedFlow = flowSelection.value;
-        if (!selectedFlow || selectedFlow === "Choose a flow") {
-            alert('Please select a valid flow.');
-            return;
+        // Enable OK button only when both a file and a flow are selected
+        function updateOkButtonState() {
+            okButton.disabled = !selectedFile || !flowSelection.value || flowSelection.value === "Choose a flow";
         }
 
-        try {
-            const response = await fetch(`/Home/TriggerPython?flowName=${encodeURIComponent(selectedFlow)}`, {
-                method: 'POST'
-            });
-
-            if (!response.ok) throw new Error('Failed to trigger Python code');
-            alert('Python script triggered successfully!');
-        } catch (error) {
-            console.error('Error triggering Python code:', error);
-            alert('Failed to trigger Python script.');
-        }
-    });
-
+        flowSelection.addEventListener('change', updateOkButtonState);
 
         filePickerButton.addEventListener('click', () => fileInput.click());
 
         fileInput.addEventListener('change', (event) => {
-            const file = event.target.files[0];
-            if (file) {
-                fileNameDisplay.textContent = `Selected file: ${file.name}`;
-                uploadButton.disabled = false;
+            selectedFile = event.target.files[0];
+            if (selectedFile) {
+                fileNameDisplay.textContent = `Selected file: ${selectedFile.name}`;
             } else {
                 fileNameDisplay.textContent = 'No file selected.';
-                uploadButton.disabled = true;
             }
+            updateOkButtonState();
         });
 
         dropzone.addEventListener('dragover', (event) => {
@@ -149,41 +129,47 @@
 
             const file = event.dataTransfer.files[0];
             if (file && (file.type === 'text/csv' || file.name.endsWith('.xls') || file.name.endsWith('.xlsx'))) {
+                selectedFile = file;
                 fileNameDisplay.textContent = `Selected file: ${file.name}`;
-                uploadButton.disabled = false;
             } else {
+                selectedFile = null;
                 fileNameDisplay.textContent = 'Please upload a valid CSV or Excel file.';
-                uploadButton.disabled = true;
             }
+            updateOkButtonState();
         });
 
-        uploadButton.addEventListener('click', async function () {
-            const file = fileInput.files[0];
-            if (!file) {
-                alert('Please select a file before uploading.');
+        okButton.addEventListener('click', async function () {
+            const selectedFlow = flowSelection.value;
+
+            if (!selectedFile || !selectedFlow || selectedFlow === "Choose a flow") {
+                alert('Please select both a file and a flow.');
                 return;
             }
 
             const formData = new FormData();
-            formData.append('file', file);
+            formData.append('file', selectedFile);
+            formData.append('flowName', selectedFlow);
 
             try {
-                const response = await fetch('/Home/UploadFile', {
+                const response = await fetch('/Home/TriggerPython', {
                     method: 'POST',
                     body: formData
                 });
 
-                if (!response.ok) throw new Error('Failed to upload file');
-                alert('File uploaded successfully!');
+                if (!response.ok) throw new Error('Failed to trigger Python script');
+                const result = await response.json();
+                alert(result.message);
             } catch (error) {
-                console.error('Error uploading file:', error);
-                alert('Failed to upload file.');
+                console.error('Error triggering Python script:', error);
+                alert('Failed to trigger Python script.');
             }
         });
 
+        // Periodically fetch the list of flows
         setInterval(fetchFlows, 5000);
         fetchFlows(); // Initial fetch
     });
+
 </script>
 
 

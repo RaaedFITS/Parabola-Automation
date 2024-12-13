@@ -78,14 +78,33 @@ namespace Parabola_Automation.Controllers
         }
 
         [HttpPost]
-        public IActionResult TriggerPython(string flowName)
+        public IActionResult TriggerPython([FromForm] IFormFile file, [FromForm] string flowName)
         {
+            if (file == null || file.Length == 0 || string.IsNullOrEmpty(flowName))
+            {
+                return BadRequest(new { error = "File or flow name is missing." });
+            }
+
+            // Save the uploaded file
+            var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "Uploads");
+            if (!Directory.Exists(uploadsFolder))
+            {
+                Directory.CreateDirectory(uploadsFolder);
+            }
+
+            var filePath = Path.Combine(uploadsFolder, file.FileName);
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                file.CopyTo(stream);
+            }
+
             try
             {
+                // Trigger the Python script with the flowName and filePath
                 var startInfo = new ProcessStartInfo
                 {
                     FileName = "python",
-                    Arguments = $"parabola.py \"{flowName}\"", // Pass the flowName to the Python script
+                    Arguments = $"parabola.py \"{flowName}\" \"{filePath}\"", // Pass both flowName and filePath
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     UseShellExecute = false,
@@ -114,6 +133,7 @@ namespace Parabola_Automation.Controllers
                 return StatusCode(500, new { error = ex.Message });
             }
         }
+
 
 
 
