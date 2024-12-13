@@ -100,25 +100,26 @@
             }
         });
 
-        okButton.addEventListener('click', async function () {
-            const selectedFlow = flowSelection.value;
-            if (!selectedFlow || selectedFlow === "Choose a flow") {
-                alert('Please select a valid flow.');
-                return;
-            }
+           okButton.addEventListener('click', async function () {
+        const selectedFlow = flowSelection.value;
+        if (!selectedFlow || selectedFlow === "Choose a flow") {
+            alert('Please select a valid flow.');
+            return;
+        }
 
-            try {
-                const response = await fetch(`/Home/TriggerPython?flowName=${encodeURIComponent(selectedFlow)}`, {
-                    method: 'POST'
-                });
+        try {
+            const response = await fetch(`/Home/TriggerPython?flowName=${encodeURIComponent(selectedFlow)}`, {
+                method: 'POST'
+            });
 
-                if (!response.ok) throw new Error('Failed to trigger Python code');
-                alert('Python script triggered successfully!');
-            } catch (error) {
-                console.error('Error triggering Python code:', error);
-                alert('Failed to trigger Python script.');
-            }
-        });
+            if (!response.ok) throw new Error('Failed to trigger Python code');
+            alert('Python script triggered successfully!');
+        } catch (error) {
+            console.error('Error triggering Python code:', error);
+            alert('Failed to trigger Python script.');
+        }
+    });
+
 
         filePickerButton.addEventListener('click', () => fileInput.click());
 

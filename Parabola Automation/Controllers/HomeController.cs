@@ -77,7 +77,6 @@ namespace Parabola_Automation.Controllers
             return Ok(new { message = "File uploaded successfully.", filePath });
         }
 
-
         [HttpPost]
         public IActionResult TriggerPython(string flowName)
         {
@@ -86,7 +85,7 @@ namespace Parabola_Automation.Controllers
                 var startInfo = new ProcessStartInfo
                 {
                     FileName = "python",
-                    Arguments = $"another_script.py \"{flowName}\"", // Replace with your script name and pass the flowName
+                    Arguments = $"parabola.py \"{flowName}\"", // Pass the flowName to the Python script
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     UseShellExecute = false,
@@ -115,6 +114,7 @@ namespace Parabola_Automation.Controllers
                 return StatusCode(500, new { error = ex.Message });
             }
         }
+
 
 
     }

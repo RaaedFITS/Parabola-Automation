@@ -33,3 +33,4 @@ C:\Users\developer_fitsexpres\source\repos\Parabola Automation\Parabola Automati
 C:\Users\developer_fitsexpres\source\repos\Parabola Automation\Parabola Automation\obj\Debug\net8.0\Parabola Automation.genruntimeconfig.cache
 C:\Users\developer_fitsexpres\source\repos\Parabola Automation\Parabola Automation\obj\Debug\net8.0\ref\Parabola Automation.dll
 C:\Users\developer_fitsexpres\source\repos\Parabola Automation\Parabola Automation\bin\Debug\net8.0\flows.json
+C:\Users\developer_fitsexpres\source\repos\Parabola Automation\Parabola Automation\obj\Debug\net8.0\Parabola Automation.sourcelink.json
