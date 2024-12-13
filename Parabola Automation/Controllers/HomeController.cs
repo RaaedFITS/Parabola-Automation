@@ -53,29 +53,7 @@ namespace Parabola_Automation.Controllers
             }
         }
 
-        [HttpPost]
-        public IActionResult UploadFile(IFormFile file)
-        {
-            if (file == null || file.Length == 0)
-            {
-                return BadRequest(new { error = "Invalid file." });
-            }
-
-            var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "Uploads");
-            if (!Directory.Exists(uploadsFolder))
-            {
-                Directory.CreateDirectory(uploadsFolder);
-            }
-
-            var filePath = Path.Combine(uploadsFolder, file.FileName);
-
-            using (var stream = new FileStream(filePath, FileMode.Create))
-            {
-                file.CopyTo(stream);
-            }
-
-            return Ok(new { message = "File uploaded successfully.", filePath });
-        }
+      
 
         [HttpPost]
         public IActionResult TriggerPython([FromForm] IFormFile file, [FromForm] string flowName)
