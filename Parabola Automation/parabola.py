@@ -2,6 +2,8 @@ import sys
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 import time
 
 # Get the flow name and file path from command-line arguments
@@ -68,7 +70,6 @@ try:
     # Locate the file upload input element dynamically
     print("Locating the file upload input element...")
     file_input = browser.find_element(By.XPATH, "//div[contains(@class, 'css-1i2ya67')]//input[@type='file']")
-    
     print(f"Uploading file: {file_path}")
     file_input.send_keys(file_path)
     print("File uploaded successfully.")
@@ -84,12 +85,33 @@ try:
     except Exception as e:
         print(f"Exit button not found or could not be clicked: {e}")
 
-    # Locate the 'Run Flow' button using its text
-    print("Looking for the 'Run Flow' button...")
-    run_flow_button = browser.find_element(By.XPATH, "//div[contains(text(), 'Run Flow')]")
-    run_flow_button.click()
-    print("Clicked on the 'Run Flow' button.")
-    time.sleep(5)  # Wait for the action to complete
+    # Wait for the first "Run Flow" button to become clickable
+    print("Waiting for the first 'Run Flow' button to become clickable...")
+    wait = WebDriverWait(browser, 30)  # Wait for up to 30 seconds
+    first_run_flow_button = wait.until(
+        EC.element_to_be_clickable((By.XPATH, "//button[contains(@class, 'css-1eo098y') and contains(text(), 'Run Flow')]"))
+    )
+    print("The first 'Run Flow' button is now clickable.")
+    first_run_flow_button.click()
+    print("Clicked on the first 'Run Flow' button.")
+    time.sleep(5)
+
+    # Wait for the second "Run Flow" button to appear and click it
+    print("Waiting for the second 'Run Flow' button to become visible...")
+    second_run_flow_button = wait.until(
+        EC.element_to_be_clickable((By.XPATH, "//div[@class='css-1aj1cwm el2um1b0']//div[contains(@class, 'css-1yzkv2u') and text()='Run Flow']"))
+    )
+    print("The second 'Run Flow' button is now clickable.")
+    second_run_flow_button.click()
+    print("Clicked on the second 'Run Flow' button.")
+    time.sleep(5)
+
+    # Wait for the "Run Flow" button to return to its initial state
+    print("Waiting for the 'Run Flow' button to return to its initial state...")
+    wait.until(
+        EC.presence_of_element_located((By.XPATH, "//button[contains(@class, 'css-hgd1m') and contains(text(), 'Run Flow')]"))
+    )
+    print("The 'Run Flow' button has returned to its initial state.")
 
 except Exception as e:
     print(f"An error occurred: {e}")
