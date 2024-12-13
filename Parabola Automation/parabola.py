@@ -16,11 +16,16 @@ file_path = sys.argv[2]
 print(f"Flow name: {flow_name}")
 print(f"File path: {file_path}")
 
-# Set up the Chrome WebDriver
-print("Initializing WebDriver...")
-browser = webdriver.Chrome()
-print("Maximizing browser window...")
-browser.maximize_window()
+# Set up the Chrome WebDriver in headless mode
+print("Initializing WebDriver in headless mode...")
+options = webdriver.ChromeOptions()
+options.add_argument("--headless")  # Run in headless mode
+options.add_argument("--disable-gpu")  # Disable GPU acceleration
+options.add_argument("--no-sandbox")  # Required for some Linux environments
+options.add_argument("--disable-dev-shm-usage")  # Overcome resource limits in Docker
+options.add_argument("--window-size=1920,1080")  # Default window size for headless mode
+
+browser = webdriver.Chrome(options=options)
 
 try:
     # Open the Parabola login page
