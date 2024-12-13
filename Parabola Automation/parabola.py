@@ -17,6 +17,8 @@ print(f"File path: {file_path}")
 # Set up the Chrome WebDriver
 print("Initializing WebDriver...")
 browser = webdriver.Chrome()
+print("Maximizing browser window...")
+browser.maximize_window()
 
 try:
     # Open the Parabola login page
@@ -48,53 +50,47 @@ try:
     print(f"Clicked on the '{flow_name}' link.")
     time.sleep(2)
 
-        # Locate the deepest interactive element
-
+    # Locate the deepest interactive element
     print("Locating the deeper inner element to click...")
-
-    deepest_element = browser.find_element(By.XPATH, "//div[@class='css-1q4vvn7']")  # Refined XPath for deeper targeting
-
-
-
-    # Perform the click action
-
+    deepest_element = browser.find_element(By.XPATH, "//div[@class='css-1q4vvn7']")
     print("Performing a click on the deeper element...")
-
     actions = ActionChains(browser)
-
     actions.click(deepest_element).perform()
-
     time.sleep(1)
-
     print("Click on the deeper element completed.")
 
-
-
     # Perform a double-click action to ensure interaction
-
     print("Performing a double-click on the deeper element...")
-
     actions.double_click(deepest_element).perform()
-
     print("Double-click on the deeper element completed.")
-
-
-
-    # Delay before ending the script to observe changes
-
     time.sleep(3)
 
     # Locate the file upload input element dynamically
     print("Locating the file upload input element...")
     file_input = browser.find_element(By.XPATH, "//div[contains(@class, 'css-1i2ya67')]//input[@type='file']")
-    time.sleep(10)
-    # Upload the file
+    
     print(f"Uploading file: {file_path}")
     file_input.send_keys(file_path)
     print("File uploaded successfully.")
     time.sleep(5)
 
-    time.sleep(10)
+    # Locate and click the Exit button
+    print("Looking for the 'Exit' button...")
+    try:
+        exit_button = browser.find_element(By.XPATH, "//div[contains(@class, 'modal-dismiss')]")
+        exit_button.click()
+        print("Clicked on the 'Exit' button.")
+        time.sleep(2)
+    except Exception as e:
+        print(f"Exit button not found or could not be clicked: {e}")
+
+    # Locate the 'Run Flow' button using its text
+    print("Looking for the 'Run Flow' button...")
+    run_flow_button = browser.find_element(By.XPATH, "//div[contains(text(), 'Run Flow')]")
+    run_flow_button.click()
+    print("Clicked on the 'Run Flow' button.")
+    time.sleep(5)  # Wait for the action to complete
+
 except Exception as e:
     print(f"An error occurred: {e}")
 finally:

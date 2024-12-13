@@ -10,13 +10,19 @@ POLL_INTERVAL = 5  # Time in seconds between checks
 # Global browser instance
 browser = None
 
-def start_browser():
+def start_browser(headless=False):
     """Start and return a persistent Selenium browser instance."""
     global browser
     if browser is None:
         options = webdriver.ChromeOptions()
         options.add_argument("--start-maximized")  # Open maximized
         options.add_argument("--disable-extensions")
+        
+        if headless:
+            options.add_argument("--headless")  # Run in headless mode
+            options.add_argument("--disable-gpu")  # Disable GPU acceleration
+            options.add_argument("--window-size=1920,1080")  # Set a default window size for headless mode
+        
         browser = webdriver.Chrome(options=options)
         browser.implicitly_wait(10)
         browser.get('https://parabola.io/app/flows/home')
@@ -62,10 +68,10 @@ def save_flows_to_file(flows):
     with open(SESSION_FILE, "w") as file:
         json.dump(flows, file)
 
-def monitor_dashboard():
+def monitor_dashboard(headless=False):
     """Continuously monitor the dashboard for changes."""
     global browser
-    browser = start_browser()
+    browser = start_browser(headless=headless)
     existing_flows = set(get_flows_from_file())
 
     try:
@@ -93,4 +99,5 @@ def monitor_dashboard():
             browser.quit()
 
 if __name__ == "__main__":
-    monitor_dashboard()
+    # Pass `headless=True` to run in headless mode
+    monitor_dashboard(headless=True)
