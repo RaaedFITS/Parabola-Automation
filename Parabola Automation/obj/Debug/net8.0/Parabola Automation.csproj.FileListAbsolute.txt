@@ -1,0 +1,35 @@
+C:\Users\developer_fitsexpres\source\repos\Parabola Automation\Parabola Automation\bin\Debug\net8.0\appsettings.Development.json
+C:\Users\developer_fitsexpres\source\repos\Parabola Automation\Parabola Automation\bin\Debug\net8.0\appsettings.json
+C:\Users\developer_fitsexpres\source\repos\Parabola Automation\Parabola Automation\bin\Debug\net8.0\Parabola Automation.staticwebassets.runtime.json
+C:\Users\developer_fitsexpres\source\repos\Parabola Automation\Parabola Automation\bin\Debug\net8.0\Parabola Automation.staticwebassets.endpoints.json
+C:\Users\developer_fitsexpres\source\repos\Parabola Automation\Parabola Automation\bin\Debug\net8.0\Parabola Automation.exe
+C:\Users\developer_fitsexpres\source\repos\Parabola Automation\Parabola Automation\bin\Debug\net8.0\Parabola Automation.deps.json
+C:\Users\developer_fitsexpres\source\repos\Parabola Automation\Parabola Automation\bin\Debug\net8.0\Parabola Automation.runtimeconfig.json
+C:\Users\developer_fitsexpres\source\repos\Parabola Automation\Parabola Automation\bin\Debug\net8.0\Parabola Automation.dll
+C:\Users\developer_fitsexpres\source\repos\Parabola Automation\Parabola Automation\bin\Debug\net8.0\Parabola Automation.pdb
+C:\Users\developer_fitsexpres\source\repos\Parabola Automation\Parabola Automation\obj\Debug\net8.0\Parabola Automation.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\developer_fitsexpres\source\repos\Parabola Automation\Parabola Automation\obj\Debug\net8.0\Parabola Automation.AssemblyInfoInputs.cache
+C:\Users\developer_fitsexpres\source\repos\Parabola Automation\Parabola Automation\obj\Debug\net8.0\Parabola Automation.AssemblyInfo.cs
+C:\Users\developer_fitsexpres\source\repos\Parabola Automation\Parabola Automation\obj\Debug\net8.0\Parabola Automation.csproj.CoreCompileInputs.cache
+C:\Users\developer_fitsexpres\source\repos\Parabola Automation\Parabola Automation\obj\Debug\net8.0\Parabola Automation.MvcApplicationPartsAssemblyInfo.cache
+C:\Users\developer_fitsexpres\source\repos\Parabola Automation\Parabola Automation\obj\Debug\net8.0\Parabola Automation.RazorAssemblyInfo.cache
+C:\Users\developer_fitsexpres\source\repos\Parabola Automation\Parabola Automation\obj\Debug\net8.0\Parabola Automation.RazorAssemblyInfo.cs
+C:\Users\developer_fitsexpres\source\repos\Parabola Automation\Parabola Automation\obj\Debug\net8.0\scopedcss\Views\Shared\_Layout.cshtml.rz.scp.css
+C:\Users\developer_fitsexpres\source\repos\Parabola Automation\Parabola Automation\obj\Debug\net8.0\scopedcss\bundle\Parabola Automation.styles.css
+C:\Users\developer_fitsexpres\source\repos\Parabola Automation\Parabola Automation\obj\Debug\net8.0\scopedcss\projectbundle\Parabola Automation.bundle.scp.css
+C:\Users\developer_fitsexpres\source\repos\Parabola Automation\Parabola Automation\obj\Debug\net8.0\staticwebassets.build.json
+C:\Users\developer_fitsexpres\source\repos\Parabola Automation\Parabola Automation\obj\Debug\net8.0\staticwebassets.development.json
+C:\Users\developer_fitsexpres\source\repos\Parabola Automation\Parabola Automation\obj\Debug\net8.0\staticwebassets.build.endpoints.json
+C:\Users\developer_fitsexpres\source\repos\Parabola Automation\Parabola Automation\obj\Debug\net8.0\staticwebassets\msbuild.Parabola Automation.Microsoft.AspNetCore.StaticWebAssets.props
+C:\Users\developer_fitsexpres\source\repos\Parabola Automation\Parabola Automation\obj\Debug\net8.0\staticwebassets\msbuild.Parabola Automation.Microsoft.AspNetCore.StaticWebAssetEndpoints.props
+C:\Users\developer_fitsexpres\source\repos\Parabola Automation\Parabola Automation\obj\Debug\net8.0\staticwebassets\msbuild.build.Parabola Automation.props
+C:\Users\developer_fitsexpres\source\repos\Parabola Automation\Parabola Automation\obj\Debug\net8.0\staticwebassets\msbuild.buildMultiTargeting.Parabola Automation.props
+C:\Users\developer_fitsexpres\source\repos\Parabola Automation\Parabola Automation\obj\Debug\net8.0\staticwebassets\msbuild.buildTransitive.Parabola Automation.props
+C:\Users\developer_fitsexpres\source\repos\Parabola Automation\Parabola Automation\obj\Debug\net8.0\staticwebassets.pack.json
+C:\Users\developer_fitsexpres\source\repos\Parabola Automation\Parabola Automation\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt
+C:\Users\developer_fitsexpres\source\repos\Parabola Automation\Parabola Automation\obj\Debug\net8.0\Parabola Automation.dll
+C:\Users\developer_fitsexpres\source\repos\Parabola Automation\Parabola Automation\obj\Debug\net8.0\refint\Parabola Automation.dll
+C:\Users\developer_fitsexpres\source\repos\Parabola Automation\Parabola Automation\obj\Debug\net8.0\Parabola Automation.pdb
+C:\Users\developer_fitsexpres\source\repos\Parabola Automation\Parabola Automation\obj\Debug\net8.0\Parabola Automation.genruntimeconfig.cache
+C:\Users\developer_fitsexpres\source\repos\Parabola Automation\Parabola Automation\obj\Debug\net8.0\ref\Parabola Automation.dll
+C:\Users\developer_fitsexpres\source\repos\Parabola Automation\Parabola Automation\bin\Debug\net8.0\flows.json

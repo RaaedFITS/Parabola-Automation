@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "R9E37PF92jM=",
+  "success": true,
+  "projectFilePath": "C:\\Users\\developer_fitsexpres\\source\\repos\\Parabola Automation\\Parabola Automation\\Parabola Automation.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\developer_fitsexpres\\.nuget\\packages\\microsoft.visualstudio.azure.containers.tools.targets\\1.21.0\\microsoft.visualstudio.azure.containers.tools.targets.1.21.0.nupkg.sha512"
+  ],
+  "logs": []
+}

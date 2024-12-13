@@ -1,0 +1,194 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="container mt-5">
+    <div class="text-center">
+        <h1 class="display-4 mb-4">Welcome</h1>
+        <p class="mb-4">Learn about <a href="https://learn.microsoft.com/aspnet/core" target="_blank">building Web apps with ASP.NET Core</a>.</p>
+    </div>
+
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">Upload Your CSV or Excel File</h5>
+        </div>
+        <div class="card-body">
+            <!-- Dropdown for selecting the flow -->
+            <div class="mb-3">
+                <label for="flowSelection" class="form-label">Select the Flow:</label>
+                <select class="form-select" id="flowSelection">
+                    <option selected disabled>Choose a flow</option>
+                </select>
+            </div>
+
+            <!-- OK button to trigger the Python code -->
+            <div class="mb-3">
+                <button class="btn btn-success" id="okButton" disabled>OK</button>
+            </div>
+
+            <!-- Drag-and-drop area for CSV/Excel file upload -->
+            <div id="dropzone" class="border border-primary rounded p-4 text-center" style="background-color: #f8f9fa;">
+                <p class="mb-2">Drag and drop your CSV or Excel file here</p>
+                <p class="text-muted">or</p>
+                <button class="btn btn-primary" id="filePickerButton">Choose File</button>
+                <input type="file" id="fileInput" accept=".csv, .xlsx, .xls" class="d-none">
+            </div>
+
+            <!-- Feedback for the uploaded file -->
+            <div id="fileName" class="mt-3 text-muted">No file selected.</div>
+
+            <!-- Upload Button -->
+            <div class="mt-3">
+                <button class="btn btn-primary" id="uploadButton" disabled>Upload</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const flowSelection = document.getElementById('flowSelection');
+        const okButton = document.getElementById('okButton');
+        const fileInput = document.getElementById('fileInput');
+        const filePickerButton = document.getElementById('filePickerButton');
+        const dropzone = document.getElementById('dropzone');
+        const fileNameDisplay = document.getElementById('fileName');
+        const uploadButton = document.getElementById('uploadButton');
+
+        async function fetchFlows() {
+            try {
+                const response = await fetch('/Home/GetFlows');
+                if (!response.ok) throw new Error('Failed to fetch flow names');
+
+                const flowNames = await response.json();
+
+                // Preserve the current selection
+                const currentSelectedValue = flowSelection.value;
+
+                // Get current dropdown options
+                const currentOptions = Array.from(flowSelection.options).map(option => option.value);
+
+                // Update dropdown only if there are changes
+                if (JSON.stringify(currentOptions) !== JSON.stringify(flowNames)) {
+                    const currentOptionsMap = new Map(currentOptions.map(value => [value, true]));
+
+                    flowNames.forEach(name => {
+                        if (!currentOptionsMap.has(name)) {
+                            const option = document.createElement('option');
+                            option.value = name;
+                            option.textContent = name;
+                            flowSelection.appendChild(option);
+                        }
+                    });
+
+                    Array.from(flowSelection.options).forEach(option => {
+                        if (option.value !== "Choose a flow" && !flowNames.includes(option.value)) {
+                            flowSelection.removeChild(option);
+                        }
+                    });
+
+                    flowSelection.value = currentSelectedValue || "Choose a flow";
+                }
+            } catch (error) {
+                console.error('Error fetching flow names:', error);
+            }
+        }
+
+        flowSelection.addEventListener('change', function () {
+            if (flowSelection.value !== "Choose a flow") {
+                okButton.disabled = false;
+            }
+        });
+
+        okButton.addEventListener('click', async function () {
+            const selectedFlow = flowSelection.value;
+            if (!selectedFlow || selectedFlow === "Choose a flow") {
+                alert('Please select a valid flow.');
+                return;
+            }
+
+            try {
+                const response = await fetch(`/Home/TriggerPython?flowName=${encodeURIComponent(selectedFlow)}`, {
+                    method: 'POST'
+                });
+
+                if (!response.ok) throw new Error('Failed to trigger Python code');
+                alert('Python script triggered successfully!');
+            } catch (error) {
+                console.error('Error triggering Python code:', error);
+                alert('Failed to trigger Python script.');
+            }
+        });
+
+        filePickerButton.addEventListener('click', () => fileInput.click());
+
+        fileInput.addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            if (file) {
+                fileNameDisplay.textContent = `Selected file: ${file.name}`;
+                uploadButton.disabled = false;
+            } else {
+                fileNameDisplay.textContent = 'No file selected.';
+                uploadButton.disabled = true;
+            }
+        });
+
+        dropzone.addEventListener('dragover', (event) => {
+            event.preventDefault();
+            dropzone.classList.add('border-success');
+        });
+
+        dropzone.addEventListener('dragleave', () => {
+            dropzone.classList.remove('border-success');
+        });
+
+        dropzone.addEventListener('drop', (event) => {
+            event.preventDefault();
+            dropzone.classList.remove('border-success');
+
+            const file = event.dataTransfer.files[0];
+            if (file && (file.type === 'text/csv' || file.name.endsWith('.xls') || file.name.endsWith('.xlsx'))) {
+                fileNameDisplay.textContent = `Selected file: ${file.name}`;
+                uploadButton.disabled = false;
+            } else {
+                fileNameDisplay.textContent = 'Please upload a valid CSV or Excel file.';
+                uploadButton.disabled = true;
+            }
+        });
+
+        uploadButton.addEventListener('click', async function () {
+            const file = fileInput.files[0];
+            if (!file) {
+                alert('Please select a file before uploading.');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            try {
+                const response = await fetch('/Home/UploadFile', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) throw new Error('Failed to upload file');
+                alert('File uploaded successfully!');
+            } catch (error) {
+                console.error('Error uploading file:', error);
+                alert('Failed to upload file.');
+            }
+        });
+
+        setInterval(fetchFlows, 5000);
+        fetchFlows(); // Initial fetch
+    });
+</script>
+
+
+
+<!-- Add this inside your body -->
+<div id="loadingScreen" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); z-index: 9999; justify-content: center; align-items: center; color: white; font-size: 1.5rem;">
+    Loading flows from Parabola...
+</div>
+
