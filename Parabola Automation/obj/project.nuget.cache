@@ -1,10 +1,20 @@
 {
   "version": 2,
-  "dgSpecHash": "R9E37PF92jM=",
+  "dgSpecHash": "+k2z9m4AElo=",
   "success": true,
   "projectFilePath": "C:\\Users\\developer_fitsexpres\\source\\repos\\Parabola Automation\\Parabola Automation\\Parabola Automation.csproj",
   "expectedPackageFiles": [
-    "C:\\Users\\developer_fitsexpres\\.nuget\\packages\\microsoft.visualstudio.azure.containers.tools.targets\\1.21.0\\microsoft.visualstudio.azure.containers.tools.targets.1.21.0.nupkg.sha512"
+    "C:\\Users\\developer_fitsexpres\\.nuget\\packages\\documentformat.openxml\\3.2.0\\documentformat.openxml.3.2.0.nupkg.sha512",
+    "C:\\Users\\developer_fitsexpres\\.nuget\\packages\\documentformat.openxml.framework\\3.2.0\\documentformat.openxml.framework.3.2.0.nupkg.sha512",
+    "C:\\Users\\developer_fitsexpres\\.nuget\\packages\\google.apis\\1.68.0\\google.apis.1.68.0.nupkg.sha512",
+    "C:\\Users\\developer_fitsexpres\\.nuget\\packages\\google.apis.auth\\1.68.0\\google.apis.auth.1.68.0.nupkg.sha512",
+    "C:\\Users\\developer_fitsexpres\\.nuget\\packages\\google.apis.core\\1.68.0\\google.apis.core.1.68.0.nupkg.sha512",
+    "C:\\Users\\developer_fitsexpres\\.nuget\\packages\\google.apis.drive.v3\\1.68.0.3608\\google.apis.drive.v3.1.68.0.3608.nupkg.sha512",
+    "C:\\Users\\developer_fitsexpres\\.nuget\\packages\\microsoft.visualstudio.azure.containers.tools.targets\\1.21.0\\microsoft.visualstudio.azure.containers.tools.targets.1.21.0.nupkg.sha512",
+    "C:\\Users\\developer_fitsexpres\\.nuget\\packages\\newtonsoft.json\\13.0.3\\newtonsoft.json.13.0.3.nupkg.sha512",
+    "C:\\Users\\developer_fitsexpres\\.nuget\\packages\\system.codedom\\7.0.0\\system.codedom.7.0.0.nupkg.sha512",
+    "C:\\Users\\developer_fitsexpres\\.nuget\\packages\\system.io.packaging\\8.0.1\\system.io.packaging.8.0.1.nupkg.sha512",
+    "C:\\Users\\developer_fitsexpres\\.nuget\\packages\\system.management\\7.0.2\\system.management.7.0.2.nupkg.sha512"
   ],
   "logs": []
 }

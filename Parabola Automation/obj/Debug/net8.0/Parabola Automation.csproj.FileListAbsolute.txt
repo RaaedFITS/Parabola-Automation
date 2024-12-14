@@ -34,3 +34,17 @@ C:\Users\developer_fitsexpres\source\repos\Parabola Automation\Parabola Automati
 C:\Users\developer_fitsexpres\source\repos\Parabola Automation\Parabola Automation\obj\Debug\net8.0\ref\Parabola Automation.dll
 C:\Users\developer_fitsexpres\source\repos\Parabola Automation\Parabola Automation\bin\Debug\net8.0\flows.json
 C:\Users\developer_fitsexpres\source\repos\Parabola Automation\Parabola Automation\obj\Debug\net8.0\Parabola Automation.sourcelink.json
+C:\Users\developer_fitsexpres\source\repos\Parabola Automation\Parabola Automation\bin\Debug\net8.0\Google.Apis.dll
+C:\Users\developer_fitsexpres\source\repos\Parabola Automation\Parabola Automation\bin\Debug\net8.0\Google.Apis.Auth.dll
+C:\Users\developer_fitsexpres\source\repos\Parabola Automation\Parabola Automation\bin\Debug\net8.0\Google.Apis.Core.dll
+C:\Users\developer_fitsexpres\source\repos\Parabola Automation\Parabola Automation\bin\Debug\net8.0\Google.Apis.Drive.v3.dll
+C:\Users\developer_fitsexpres\source\repos\Parabola Automation\Parabola Automation\bin\Debug\net8.0\Newtonsoft.Json.dll
+C:\Users\developer_fitsexpres\source\repos\Parabola Automation\Parabola Automation\bin\Debug\net8.0\System.CodeDom.dll
+C:\Users\developer_fitsexpres\source\repos\Parabola Automation\Parabola Automation\bin\Debug\net8.0\System.Management.dll
+C:\Users\developer_fitsexpres\source\repos\Parabola Automation\Parabola Automation\bin\Debug\net8.0\runtimes\win\lib\net7.0\System.Management.dll
+C:\Users\developer_fitsexpres\source\repos\Parabola Automation\Parabola Automation\obj\Debug\net8.0\Parabola Automation.csproj.AssemblyReference.cache
+C:\Users\developer_fitsexpres\source\repos\Parabola Automation\Parabola Automation\obj\Debug\net8.0\Parabola.69FA4016.Up2Date
+C:\Users\developer_fitsexpres\source\repos\Parabola Automation\Parabola Automation\bin\Debug\net8.0\credentials.json
+C:\Users\developer_fitsexpres\source\repos\Parabola Automation\Parabola Automation\bin\Debug\net8.0\DocumentFormat.OpenXml.dll
+C:\Users\developer_fitsexpres\source\repos\Parabola Automation\Parabola Automation\bin\Debug\net8.0\DocumentFormat.OpenXml.Framework.dll
+C:\Users\developer_fitsexpres\source\repos\Parabola Automation\Parabola Automation\bin\Debug\net8.0\System.IO.Packaging.dll
