@@ -37,7 +37,7 @@ namespace Parabola_Automation.Controllers
                 HttpClientInitializer = credential
             });
 
-            // Search for text files in the specified directory
+            // Search for Google Docs in the specified directory
             var request = service.Files.List();
             request.Q = $"'{DirectoryId}' in parents"; // Specify the folder ID
             var response = await request.ExecuteAsync();
@@ -47,23 +47,27 @@ namespace Parabola_Automation.Controllers
                 Console.WriteLine($"{driveFile.Id} {driveFile.Name} {driveFile.MimeType}");
             }
 
-            // Download the first text file if it exists
-            var textFile = response.Files.FirstOrDefault(file => file.MimeType.Equals("application/vnd.google-apps.document"));
-            if (textFile != null)
+            // Export the first Google Docs file to `.docx` format if it exists
+            var googleDocFile = response.Files.FirstOrDefault(file => file.MimeType.Equals("application/vnd.google-apps.document"));
+            if (googleDocFile != null)
             {
-                var getRequest = service.Files.Get(textFile.Id);
-                await using var fileStream = new FileStream(textFile.Name, FileMode.Create, FileAccess.Write);
-                await getRequest.DownloadAsync(fileStream);
+                var exportRequest = service.Files.Export(googleDocFile.Id, "application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+                var fileName = $"{googleDocFile.Name}.docx";
 
-                Console.WriteLine($"Downloaded file: {textFile.Name}");
+                await using var fileStream = new FileStream(fileName, FileMode.Create, FileAccess.Write);
+                await exportRequest.DownloadAsync(fileStream);
+
+                Console.WriteLine($"Exported and saved file: {fileName}");
             }
             else
             {
-                Console.WriteLine("No text files found in the specified directory.");
+                Console.WriteLine("No Google Docs found in the specified directory.");
             }
 
             return View("~/Views/Login/Index.cshtml");
         }
+
+
 
         public async Task<IActionResult> Index()
         {
@@ -72,17 +76,7 @@ namespace Parabola_Automation.Controllers
                 // Call the Meth method to list and download files
                 await Meth();
 
-                string fileId = "1vX1OH1waD4ZLre-EbsWKU4RM-rHPPmwJN0H59invdLw"; // Replace with your `.docx` file ID
-                string docContent = FetchDocxFileFromGoogleDrive(fileId);
-
-                if (string.IsNullOrEmpty(docContent))
-                {
-                    ViewBag.Message = "No content found in the Google Drive file.";
-                }
-                else
-                {
-                    ViewBag.Message = docContent;
-                }
+               
             }
             catch (Exception ex)
             {
@@ -91,41 +85,7 @@ namespace Parabola_Automation.Controllers
 
             return View("~/Views/Login/Index.cshtml");
         }
-        private string FetchDocxFileFromGoogleDrive(string fileId)
-        {
-            string credentialsPath = Path.Combine(Directory.GetCurrentDirectory(), "credentials.json");
-
-            // Authenticate using Service Account credentials
-            GoogleCredential credential = GoogleCredential.FromFile(credentialsPath)
-                .CreateScoped(DriveService.Scope.DriveReadonly);
-
-            var service = new DriveService(new BaseClientService.Initializer
-            {
-                HttpClientInitializer = credential,
-                ApplicationName = "ParabolaProject"
-            });
-
-            // Get the file content
-            var request = service.Files.Get(fileId);
-            using (var stream = new MemoryStream())
-            {
-                request.Download(stream);
-
-                // Log the size of the downloaded file
-                if (stream.Length == 0)
-                {
-                    throw new Exception("The downloaded file is empty. Check the file ID and permissions.");
-                }
-
-                // Parse `.docx` content
-                using (var wordDoc = WordprocessingDocument.Open(stream, false))
-                {
-                    var body = wordDoc.MainDocumentPart.Document.Body;
-                    return body.InnerText;
-                }
-            }
-        }
-
+       
         public IActionResult Privacy()
         {
             return View();
