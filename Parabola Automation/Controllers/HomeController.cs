@@ -29,7 +29,6 @@ namespace Parabola_Automation.Controllers
         {
             try
             {
-                // Call the Meth method to download the Word file
                 var fileName = await Meth();
 
                 if (string.IsNullOrEmpty(fileName))
@@ -38,7 +37,6 @@ namespace Parabola_Automation.Controllers
                     return View("~/Views/Login/Index.cshtml");
                 }
 
-                // Extract JSON content from the Word document
                 var jsonContent = ExtractJsonFromWord(fileName);
 
                 if (string.IsNullOrEmpty(jsonContent))
@@ -47,7 +45,10 @@ namespace Parabola_Automation.Controllers
                     return View("~/Views/Login/Index.cshtml");
                 }
 
-                // Deserialize the JSON
+                // Sanitize the JSON to replace smart quotes with standard quotes
+                jsonContent = SanitizeJson(jsonContent);
+
+                // Deserialize the sanitized JSON
                 var users = JsonSerializer.Deserialize<List<User>>(jsonContent);
 
                 if (users == null)
@@ -56,33 +57,17 @@ namespace Parabola_Automation.Controllers
                     return View("~/Views/Login/Index.cshtml");
                 }
 
-                // Debugging: Print input values and stored data
-                Console.WriteLine($"Input Email: {email}");
-                Console.WriteLine($"Input Password: {password}");
-
-                foreach (var u in users)
-                {
-                    Console.WriteLine($"Stored Email: {u.Email}");
-                    Console.WriteLine($"Stored Password: {u.Password}");
-                    Console.WriteLine($"Stored Names: {(u.Names != null ? string.Join(", ", u.Names) : "No Names Found")}");
-                }
-
-                // Validate user credentials
                 var matchingUser = users.FirstOrDefault(u =>
                     u.Email.Trim().Equals(email.Trim(), StringComparison.OrdinalIgnoreCase) &&
                     u.Password.Trim().Equals(password.Trim()));
 
                 if (matchingUser == null)
                 {
-                    Console.WriteLine("No matching user found. Check input values and stored data.");
                     ViewBag.Message = "Invalid email or password.";
                     return View("~/Views/Login/Index.cshtml");
                 }
 
-                // Handle null Names property
                 ViewBag.Names = matchingUser.Names ?? new List<string>();
-                Console.WriteLine($"User found: {matchingUser.Email}, Names: {string.Join(", ", ViewBag.Names)}");
-
                 return View("~/Views/Home/Index.cshtml");
             }
             catch (Exception ex)
@@ -93,6 +78,18 @@ namespace Parabola_Automation.Controllers
         }
 
 
+
+        public string SanitizeJson(string jsonContent)
+        {
+            if (string.IsNullOrEmpty(jsonContent)) return jsonContent;
+
+            // Replace smart quotes with standard double quotes
+            return jsonContent
+                .Replace("“", "\"") // Left smart quote
+                .Replace("”", "\"") // Right smart quote
+                .Replace("‘", "'") // Left single quote
+                .Replace("’", "'"); // Right single quote
+        }
 
 
         public class User
@@ -186,7 +183,7 @@ namespace Parabola_Automation.Controllers
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
-        [HttpGet]
+     /*   [HttpGet]
         public IActionResult GetFlows()
         {
             try
@@ -207,7 +204,7 @@ namespace Parabola_Automation.Controllers
             {
                 return StatusCode(500, new { error = ex.Message });
             }
-        }
+        }*/
 
       
 

@@ -35,9 +35,17 @@
             <div class="mb-3">
                 <label for="flowSelection" class="form-label">Select the Flow:</label>
                 <select class="form-select" id="flowSelection">
-                    <option selected disabled>Choose a flow</option>
+                    <option selected disabled>Choose a name</option>
+                    @if (ViewBag.Names != null)
+                    {
+                        foreach (var name in ViewBag.Names)
+                        {
+                            <option value="@name">@name</option>
+                        }
+                    }
                 </select>
             </div>
+
 
             <!-- OK button to trigger the Python code -->
             <div class="mb-3">
@@ -74,44 +82,7 @@
 
         let selectedFile = null;
 
-        async function fetchFlows() {
-            try {
-                const response = await fetch('/Home/GetFlows');
-                if (!response.ok) throw new Error('Failed to fetch flow names');
-
-                const flowNames = await response.json();
-
-                // Preserve the current selection
-                const currentSelectedValue = flowSelection.value;
-
-                // Get current dropdown options
-                const currentOptions = Array.from(flowSelection.options).map(option => option.value);
-
-                // Update dropdown only if there are changes
-                if (JSON.stringify(currentOptions) !== JSON.stringify(flowNames)) {
-                    const currentOptionsMap = new Map(currentOptions.map(value => [value, true]));
-
-                    flowNames.forEach(name => {
-                        if (!currentOptionsMap.has(name)) {
-                            const option = document.createElement('option');
-                            option.value = name;
-                            option.textContent = name;
-                            flowSelection.appendChild(option);
-                        }
-                    });
-
-                    Array.from(flowSelection.options).forEach(option => {
-                        if (option.value !== "Choose a flow" && !flowNames.includes(option.value)) {
-                            flowSelection.removeChild(option);
-                        }
-                    });
-
-                    flowSelection.value = currentSelectedValue || "Choose a flow";
-                }
-            } catch (error) {
-                console.error('Error fetching flow names:', error);
-            }
-        }
+      
 
         // Enable OK button only when both a file and a flow are selected
         function updateOkButtonState() {
@@ -189,9 +160,7 @@
     });
 
 
-        // Periodically fetch the list of flows
-        setInterval(fetchFlows, 5000);
-        fetchFlows(); // Initial fetch
+      
     });
 
 </script>
