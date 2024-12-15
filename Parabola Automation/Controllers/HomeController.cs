@@ -10,9 +10,14 @@ using DocumentFormat.OpenXml.Packaging;
 using Google.Apis.Upload;
 using Google.Apis.Drive.v3.Data;
 using System.Text.Json.Serialization;
+using System.Collections.Concurrent;
 
 namespace Parabola_Automation.Controllers
 {
+    public static class PythonProcessManager
+    {
+        public static ConcurrentDictionary<string, Process> RunningProcesses = new ConcurrentDictionary<string, Process>();
+    }
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
@@ -20,7 +25,7 @@ namespace Parabola_Automation.Controllers
         private const string ServiceAccountEmail = "";
         private const string UploadFileName = "docdoc.docx";
         private const string DirectoryId = "1KuBOVBlb0iNA6gZvFHk6r0R_n8pXgrjY";
-
+       
         public HomeController(ILogger<HomeController> logger)
         {
             _logger = logger;
@@ -126,10 +131,7 @@ namespace Parabola_Automation.Controllers
             request.Q = $"'{DirectoryId}' in parents"; // Specify the folder ID
             var response = await request.ExecuteAsync();
 
-            foreach (var driveFile in response.Files)
-            {
-                Console.WriteLine($"{driveFile.Id} {driveFile.Name} {driveFile.MimeType}");
-            }
+            
 
             // Export the first Google Docs file to `.docx` format if it exists
             var googleDocFile = response.Files.FirstOrDefault(file => file.MimeType.Equals("application/vnd.google-apps.document"));
@@ -141,13 +143,10 @@ namespace Parabola_Automation.Controllers
                 await using var fileStream = new FileStream(fileName, FileMode.Create, FileAccess.Write);
                 await exportRequest.DownloadAsync(fileStream);
 
-                Console.WriteLine($"Exported and saved file: {fileName}");
-
                 // Return the file name
                 return fileName;
             }
 
-            Console.WriteLine("No Google Docs found in the specified directory.");
             return null;
         }
 
@@ -227,7 +226,9 @@ namespace Parabola_Automation.Controllers
                 Directory.CreateDirectory(uploadsFolder);
             }
 
-            var filePath = Path.Combine(uploadsFolder, file.FileName);
+            var uniqueFileName = $"{Path.GetFileNameWithoutExtension(file.FileName)}_{Guid.NewGuid()}{Path.GetExtension(file.FileName)}";
+            var filePath = Path.Combine(uploadsFolder, uniqueFileName);
+
             using (var stream = new FileStream(filePath, FileMode.Create))
             {
                 file.CopyTo(stream);
@@ -252,22 +253,31 @@ namespace Parabola_Automation.Controllers
 
                 process.Start();
 
+                // Capture output and errors
                 string output = process.StandardOutput.ReadToEnd();
                 string error = process.StandardError.ReadToEnd();
+
                 process.WaitForExit();
 
-                if (!string.IsNullOrEmpty(error))
+                if (process.ExitCode != 0 || !string.IsNullOrEmpty(error))
                 {
-                    return BadRequest(new { error });
+                    // Log or display the error
+                    System.Diagnostics.Debug.WriteLine("Python script error: " + error);
+                    return BadRequest(new { error = "Python script encountered an error.", details = error });
                 }
 
-                return Ok(new { message = "Python script triggered successfully.", output });
+                // Log output for debugging
+                System.Diagnostics.Debug.WriteLine("Python script output: " + output);
+
+                return Ok(new { message = "Flow executed successfully.", output });
             }
             catch (Exception ex)
             {
                 return StatusCode(500, new { error = ex.Message });
             }
         }
+
+
 
 
     }
