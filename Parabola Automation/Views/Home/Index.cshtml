@@ -72,17 +72,17 @@
 </div>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
+       document.addEventListener('DOMContentLoaded', function () {
         const flowSelection = document.getElementById('flowSelection');
         const okButton = document.getElementById('okButton');
         const fileInput = document.getElementById('fileInput');
         const filePickerButton = document.getElementById('filePickerButton');
         const dropzone = document.getElementById('dropzone');
         const fileNameDisplay = document.getElementById('fileName');
+        const loadingScreen = document.getElementById('loadingScreen');
+        const loadingMessage = document.getElementById('loadingMessage');
 
         let selectedFile = null;
-
-      
 
         // Enable OK button only when both a file and a flow are selected
         function updateOkButtonState() {
@@ -127,48 +127,50 @@
             updateOkButtonState();
         });
 
-            okButton.addEventListener('click', async function () {
-        const selectedFlow = flowSelection.value;
+        okButton.addEventListener('click', async function () {
+            const selectedFlow = flowSelection.value;
 
-        if (!selectedFile || !selectedFlow || selectedFlow === "Choose a flow") {
-            alert('Please select both a file and a flow.');
-            return;
-        }
+            if (!selectedFile || !selectedFlow || selectedFlow === "Choose a flow") {
+                alert('Please select both a file and a flow.');
+                return;
+            }
 
-        const formData = new FormData();
-        formData.append('file', selectedFile);
-        formData.append('flowName', selectedFlow);
+            const formData = new FormData();
+            formData.append('file', selectedFile);
+            formData.append('flowName', selectedFlow);
 
-        const loadingScreen = document.getElementById('loadingScreen');
-        loadingScreen.style.display = 'flex'; // Show the loading screen
+            try {
+                // Show the loading screen with "Logging in..."
+                loadingMessage.textContent = 'Logging in to Parabola...';
+                loadingScreen.style.display = 'flex';
 
-        try {
-            const response = await fetch('/Home/TriggerPython', {
-                method: 'POST',
-                body: formData
-            });
+                const response = await fetch('/Home/TriggerPython', {
+                    method: 'POST',
+                    body: formData
+                });
 
-            if (!response.ok) throw new Error('Failed to trigger Python script');
-            const result = await response.json();
-            alert(result.message);
-        } catch (error) {
-            console.error('Error triggering Python script:', error);
-            alert('Failed to trigger Python script.');
-        } finally {
-            loadingScreen.style.display = 'none'; // Hide the loading screen
-        }
+                if (!response.ok) throw new Error('Failed to trigger Python script');
+
+                // Show "Running flow..." message
+                loadingMessage.textContent = 'Running flow...';
+
+                const result = await response.json();
+                alert(result.message);
+            } catch (error) {
+                console.error('Error triggering Python script:', error);
+                alert('Failed to trigger Python script.');
+            } finally {
+                loadingScreen.style.display = 'none'; // Hide the loading screen
+            }
+        });
     });
 
-
-      
-    });
 
 </script>
 
-
-<!-- Loading screen -->
 <div id="loadingScreen" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); z-index: 9999; justify-content: center; align-items: center; color: white; font-size: 1.5rem;">
-    Processing your request...
+    <p id="loadingMessage">Processing your request...</p>
 </div>
+
 
 

@@ -45,10 +45,8 @@ namespace Parabola_Automation.Controllers
                     return View("~/Views/Login/Index.cshtml");
                 }
 
-                // Sanitize the JSON to replace smart quotes with standard quotes
                 jsonContent = SanitizeJson(jsonContent);
 
-                // Deserialize the sanitized JSON
                 var users = JsonSerializer.Deserialize<List<User>>(jsonContent);
 
                 if (users == null)
@@ -67,6 +65,9 @@ namespace Parabola_Automation.Controllers
                     return View("~/Views/Login/Index.cshtml");
                 }
 
+                // Store the logged-in user's email in the session
+                HttpContext.Session.SetString("LoggedInUser", matchingUser.Email);
+
                 ViewBag.Names = matchingUser.Names ?? new List<string>();
                 return View("~/Views/Home/Index.cshtml");
             }
@@ -76,7 +77,11 @@ namespace Parabola_Automation.Controllers
                 return View("~/Views/Login/Index.cshtml");
             }
         }
-
+        public IActionResult Logout()
+        {
+            HttpContext.Session.Clear(); // Clear session data
+            return RedirectToAction("Index", "Home"); // Redirect to login page
+        }
 
 
         public string SanitizeJson(string jsonContent)
@@ -183,30 +188,30 @@ namespace Parabola_Automation.Controllers
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
-     /*   [HttpGet]
-        public IActionResult GetFlows()
-        {
-            try
-            {
-                var jsonFilePath = Path.Combine(Directory.GetCurrentDirectory(), "flows.json");
+        /*   [HttpGet]
+           public IActionResult GetFlows()
+           {
+               try
+               {
+                   var jsonFilePath = Path.Combine(Directory.GetCurrentDirectory(), "flows.json");
 
-                if (!System.IO.File.Exists(jsonFilePath))
-                {
-                    return NotFound(new { error = "Flows file not found." });
-                }
+                   if (!System.IO.File.Exists(jsonFilePath))
+                   {
+                       return NotFound(new { error = "Flows file not found." });
+                   }
 
-                var jsonData = System.IO.File.ReadAllText(jsonFilePath);
-                var flowNames = JsonSerializer.Deserialize<List<string>>(jsonData);
+                   var jsonData = System.IO.File.ReadAllText(jsonFilePath);
+                   var flowNames = JsonSerializer.Deserialize<List<string>>(jsonData);
 
-                return Json(flowNames);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { error = ex.Message });
-            }
-        }*/
+                   return Json(flowNames);
+               }
+               catch (Exception ex)
+               {
+                   return StatusCode(500, new { error = ex.Message });
+               }
+           }*/
 
-      
+
 
         [HttpPost]
         public IActionResult TriggerPython([FromForm] IFormFile file, [FromForm] string flowName)
@@ -216,7 +221,6 @@ namespace Parabola_Automation.Controllers
                 return BadRequest(new { error = "File or flow name is missing." });
             }
 
-            // Save the uploaded file
             var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "Uploads");
             if (!Directory.Exists(uploadsFolder))
             {
@@ -231,11 +235,10 @@ namespace Parabola_Automation.Controllers
 
             try
             {
-                // Trigger the Python script with the flowName and filePath
                 var startInfo = new ProcessStartInfo
                 {
                     FileName = "python",
-                    Arguments = $"parabola.py \"{flowName}\" \"{filePath}\"", // Pass both flowName and filePath
+                    Arguments = $"parabola.py \"{flowName}\" \"{filePath}\"",
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     UseShellExecute = false,
@@ -248,8 +251,9 @@ namespace Parabola_Automation.Controllers
                 };
 
                 process.Start();
-                var output = process.StandardOutput.ReadToEnd();
-                var error = process.StandardError.ReadToEnd();
+
+                string output = process.StandardOutput.ReadToEnd();
+                string error = process.StandardError.ReadToEnd();
                 process.WaitForExit();
 
                 if (!string.IsNullOrEmpty(error))
@@ -264,9 +268,6 @@ namespace Parabola_Automation.Controllers
                 return StatusCode(500, new { error = ex.Message });
             }
         }
-
-     
-
 
 
     }
