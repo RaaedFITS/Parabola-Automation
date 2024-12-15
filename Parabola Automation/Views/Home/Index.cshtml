@@ -3,6 +3,24 @@
 }
 
 <div class="container mt-5">
+    <h2>Welcome!</h2>
+    <h3>Associated Names:</h3>
+    <ul>
+        @if (ViewBag.Names != null)
+        {
+            foreach (var name in ViewBag.Names)
+            {
+                <li>@name</li>
+            }
+        }
+        else
+        {
+            <p>No associated names found.</p>
+        }
+    </ul>
+</div>
+
+<div class="container mt-5">
     <div class="text-center">
         <h1 class="display-4 mb-4">Welcome</h1>
         <p class="mb-4">Learn about <a href="https://learn.microsoft.com/aspnet/core" target="_blank">building Web apps with ASP.NET Core</a>.</p>

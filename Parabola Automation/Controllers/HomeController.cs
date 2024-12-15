@@ -9,6 +9,7 @@ using System.Text;
 using DocumentFormat.OpenXml.Packaging;
 using Google.Apis.Upload;
 using Google.Apis.Drive.v3.Data;
+using System.Text.Json.Serialization;
 
 namespace Parabola_Automation.Controllers
 {
@@ -24,8 +25,89 @@ namespace Parabola_Automation.Controllers
         {
             _logger = logger;
         }
+        public async Task<IActionResult> Login(string email, string password)
+        {
+            try
+            {
+                // Call the Meth method to download the Word file
+                var fileName = await Meth();
 
-        public async Task<IActionResult> Meth()
+                if (string.IsNullOrEmpty(fileName))
+                {
+                    ViewBag.Message = "Error: User data file not found.";
+                    return View("~/Views/Login/Index.cshtml");
+                }
+
+                // Extract JSON content from the Word document
+                var jsonContent = ExtractJsonFromWord(fileName);
+
+                if (string.IsNullOrEmpty(jsonContent))
+                {
+                    ViewBag.Message = "Error: Unable to extract user data.";
+                    return View("~/Views/Login/Index.cshtml");
+                }
+
+                // Deserialize the JSON
+                var users = JsonSerializer.Deserialize<List<User>>(jsonContent);
+
+                if (users == null)
+                {
+                    ViewBag.Message = "Error: Unable to parse user data.";
+                    return View("~/Views/Login/Index.cshtml");
+                }
+
+                // Debugging: Print input values and stored data
+                Console.WriteLine($"Input Email: {email}");
+                Console.WriteLine($"Input Password: {password}");
+
+                foreach (var u in users)
+                {
+                    Console.WriteLine($"Stored Email: {u.Email}");
+                    Console.WriteLine($"Stored Password: {u.Password}");
+                    Console.WriteLine($"Stored Names: {(u.Names != null ? string.Join(", ", u.Names) : "No Names Found")}");
+                }
+
+                // Validate user credentials
+                var matchingUser = users.FirstOrDefault(u =>
+                    u.Email.Trim().Equals(email.Trim(), StringComparison.OrdinalIgnoreCase) &&
+                    u.Password.Trim().Equals(password.Trim()));
+
+                if (matchingUser == null)
+                {
+                    Console.WriteLine("No matching user found. Check input values and stored data.");
+                    ViewBag.Message = "Invalid email or password.";
+                    return View("~/Views/Login/Index.cshtml");
+                }
+
+                // Handle null Names property
+                ViewBag.Names = matchingUser.Names ?? new List<string>();
+                Console.WriteLine($"User found: {matchingUser.Email}, Names: {string.Join(", ", ViewBag.Names)}");
+
+                return View("~/Views/Home/Index.cshtml");
+            }
+            catch (Exception ex)
+            {
+                ViewBag.Message = $"Error: {ex.Message}";
+                return View("~/Views/Login/Index.cshtml");
+            }
+        }
+
+
+
+
+        public class User
+        {
+            [JsonPropertyName("email")]
+            public string Email { get; set; }
+
+            [JsonPropertyName("password")]
+            public string Password { get; set; }
+
+            [JsonPropertyName("names")]
+            public List<string> Names { get; set; }
+        }
+
+        public async Task<string> Meth()
         {
             // Load the credentials
             var credential = GoogleCredential.FromFile(PathToServiceAccountKeyFiles)
@@ -58,16 +140,24 @@ namespace Parabola_Automation.Controllers
                 await exportRequest.DownloadAsync(fileStream);
 
                 Console.WriteLine($"Exported and saved file: {fileName}");
-            }
-            else
-            {
-                Console.WriteLine("No Google Docs found in the specified directory.");
+
+                // Return the file name
+                return fileName;
             }
 
-            return View("~/Views/Login/Index.cshtml");
+            Console.WriteLine("No Google Docs found in the specified directory.");
+            return null;
         }
 
-
+        public string ExtractJsonFromWord(string filePath)
+        {
+            using (WordprocessingDocument wordDoc = WordprocessingDocument.Open(filePath, false))
+            {
+                // Extract the text content from the Word document
+                var body = wordDoc.MainDocumentPart.Document.Body;
+                return body.InnerText; // Return the plain text content
+            }
+        }
 
         public async Task<IActionResult> Index()
         {
@@ -75,8 +165,6 @@ namespace Parabola_Automation.Controllers
             {
                 // Call the Meth method to list and download files
                 await Meth();
-
-               
             }
             catch (Exception ex)
             {
@@ -85,7 +173,8 @@ namespace Parabola_Automation.Controllers
 
             return View("~/Views/Login/Index.cshtml");
         }
-       
+
+
         public IActionResult Privacy()
         {
             return View();

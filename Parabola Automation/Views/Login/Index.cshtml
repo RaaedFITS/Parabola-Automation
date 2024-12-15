@@ -4,7 +4,13 @@
             <h2 class="fw-bold">Welcome Back</h2>
             <p>Please log in to continue</p>
         </div>
-        <form method="post" action="Login.aspx">
+        @if (!string.IsNullOrEmpty(ViewBag.Message))
+        {
+            <div class="alert alert-danger text-center">
+                @ViewBag.Message
+            </div>
+        }
+        <form method="post" action="/Home/Login">
             <!-- Username/Email -->
             <div class="mb-3">
                 <label for="email" class="form-label">Email address</label>
@@ -15,32 +21,10 @@
                 <label for="password" class="form-label">Password</label>
                 <input type="password" class="form-control" id="password" name="password" placeholder="Enter your password" required>
             </div>
-            <!-- Remember Me -->
-            <div class="mb-3 form-check">
-                <input type="checkbox" class="form-check-input" id="rememberMe" name="rememberMe">
-                <label class="form-check-label" for="rememberMe">Remember me</label>
-            </div>
             <!-- Submit Button -->
             <div class="d-grid">
                 <button type="submit" class="btn btn-primary">Login</button>
             </div>
-            <!-- Forgot Password Link -->
-            <div class="text-center mt-3">
-                <a href="ForgotPassword.aspx" class="text-decoration-none">Forgot your password?</a>
-            </div>
         </form>
-        <!-- Register Link -->
-        <div class="text-center mt-4">
-            <span>Don't have an account?</span>
-            <a href="Register.aspx" class="text-decoration-none">Register here</a>
-        </div>
-    </div>
-
-
-    <div class="container mt-5">
-        <h2>Google Drive JSON Content</h2>
-        <div class="alert alert-info">
-            <pre>@ViewBag.Message</pre>
-        </div>
     </div>
 </div>
