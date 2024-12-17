@@ -162,7 +162,7 @@ namespace Parabola_Automation.Controllers
 
         public async Task<IActionResult> Index()
         {
-            try
+           /* try
             {
                 // Call the Meth method to list and download files
                 await Meth();
@@ -170,9 +170,9 @@ namespace Parabola_Automation.Controllers
             catch (Exception ex)
             {
                 ViewBag.Message = $"Error: {ex.Message}";
-            }
+            }*/
 
-            return View("~/Views/Login/Index.cshtml");
+            return View();
         }
 
 

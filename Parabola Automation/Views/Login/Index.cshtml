@@ -1,4 +1,8 @@
-﻿<div class="container d-flex justify-content-center align-items-center vh-100">
+﻿@{
+    ViewData["Title"] = "Login";
+}
+
+<div class="container d-flex justify-content-center align-items-center vh-100">
     <div class="card shadow-lg p-4" style="width: 400px; border-radius: 10px;">
         <div class="text-center mb-4">
             <h2 class="fw-bold">Welcome Back</h2>
@@ -10,8 +14,8 @@
                 @ViewBag.Message
             </div>
         }
-        <form method="post" action="/Home/Login">
-            <!-- Username/Email -->
+        <form method="post" action="@Url.Action("Authenticate", "Login")">
+            <!-- Email -->
             <div class="mb-3">
                 <label for="email" class="form-label">Email address</label>
                 <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email" required>

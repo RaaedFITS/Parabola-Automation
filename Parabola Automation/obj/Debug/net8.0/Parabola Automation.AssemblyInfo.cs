@@ -15,7 +15,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Parabola Automation")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d94d84106ecd8236f259b4f57ac2fbf59f2314ed")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+6d52f41a15dca351d044e63ca10d56faf976ecff")]
 [assembly: System.Reflection.AssemblyProductAttribute("Parabola Automation")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Parabola Automation")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
