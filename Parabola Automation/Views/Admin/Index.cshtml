@@ -84,12 +84,75 @@
 
 <!-- Add User Modal -->
 <div class="modal fade" id="addUserModal" tabindex="-1" aria-labelledby="addUserModalLabel" aria-hidden="true">
-    <!-- existing Add User modal code -->
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="post" action="@Url.Action("AddUser", "Admin")">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addUserModalLabel">Add New User</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="addEmail" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="addEmail" name="Email" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="addPassword" class="form-label">Password</label>
+                        <input type="password" class="form-control" id="addPassword" name="Password" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="addRole" class="form-label">Role</label>
+                        <select class="form-select" id="addRole" name="Role" required>
+                            <option value="admin">Admin</option>
+                            <option value="employee">Employee</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Add User</button>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
 
 <!-- Edit User Modal -->
 <div class="modal fade" id="editUserModal" tabindex="-1" aria-labelledby="editUserModalLabel" aria-hidden="true">
-    <!-- existing Edit User modal code -->
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="post" action="@Url.Action("EditUser", "Admin")">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editUserModalLabel">Edit User</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Hidden field to store user id -->
+                    <input type="hidden" id="editUserId" name="Id" />
+
+                    <div class="mb-3">
+                        <label for="editEmail" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="editEmail" name="Email" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editPassword" class="form-label">Password (Leave blank to keep current)</label>
+                        <input type="password" class="form-control" id="editPassword" name="Password">
+                    </div>
+                    <div class="mb-3">
+                        <label for="editRole" class="form-label">Role</label>
+                        <select class="form-select" id="editRole" name="Role" required>
+                            <option value="admin">Admin</option>
+                            <option value="employee">Employee</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-warning">Update User</button>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
 
 <!-- Manage Flows Modal -->

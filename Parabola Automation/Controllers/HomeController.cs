@@ -11,6 +11,8 @@ using Google.Apis.Upload;
 using Google.Apis.Drive.v3.Data;
 using System.Text.Json.Serialization;
 using System.Collections.Concurrent;
+using Parabola_Automation.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace Parabola_Automation.Controllers
 {
@@ -20,160 +22,175 @@ namespace Parabola_Automation.Controllers
     }
     public class HomeController : Controller
     {
+        private readonly AppDbContext _context;
         private readonly ILogger<HomeController> _logger;
         private const string PathToServiceAccountKeyFiles = "credentials.json";
         private const string ServiceAccountEmail = "";
         private const string UploadFileName = "docdoc.docx";
         private const string DirectoryId = "1KuBOVBlb0iNA6gZvFHk6r0R_n8pXgrjY";
        
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, AppDbContext context)
         {
             _logger = logger;
-        }
-        public async Task<IActionResult> Login(string email, string password)
-        {
-            try
-            {
-                var fileName = await Meth();
-
-                if (string.IsNullOrEmpty(fileName))
-                {
-                    ViewBag.Message = "Error: User data file not found.";
-                    return View("~/Views/Login/Index.cshtml");
-                }
-
-                var jsonContent = ExtractJsonFromWord(fileName);
-
-                if (string.IsNullOrEmpty(jsonContent))
-                {
-                    ViewBag.Message = "Error: Unable to extract user data.";
-                    return View("~/Views/Login/Index.cshtml");
-                }
-
-                jsonContent = SanitizeJson(jsonContent);
-
-                var users = JsonSerializer.Deserialize<List<User>>(jsonContent);
-
-                if (users == null)
-                {
-                    ViewBag.Message = "Error: Unable to parse user data.";
-                    return View("~/Views/Login/Index.cshtml");
-                }
-
-                var matchingUser = users.FirstOrDefault(u =>
-                    u.Email.Trim().Equals(email.Trim(), StringComparison.OrdinalIgnoreCase) &&
-                    u.Password.Trim().Equals(password.Trim()));
-
-                if (matchingUser == null)
-                {
-                    ViewBag.Message = "Invalid email or password.";
-                    return View("~/Views/Login/Index.cshtml");
-                }
-
-                // Store the logged-in user's email in the session
-                HttpContext.Session.SetString("LoggedInUser", matchingUser.Email);
-
-                ViewBag.Names = matchingUser.Names ?? new List<string>();
-                return View("~/Views/Home/Index.cshtml");
-            }
-            catch (Exception ex)
-            {
-                ViewBag.Message = $"Error: {ex.Message}";
-                return View("~/Views/Login/Index.cshtml");
-            }
-        }
-        public IActionResult Logout()
-        {
-            HttpContext.Session.Clear(); // Clear session data
-            return RedirectToAction("Index", "Home"); // Redirect to login page
+            _context = context;
         }
 
+        /* public async Task<IActionResult> Login(string email, string password)
+         {
+             try
+             {
+                 var fileName = await Meth();
 
-        public string SanitizeJson(string jsonContent)
-        {
-            if (string.IsNullOrEmpty(jsonContent)) return jsonContent;
+                 if (string.IsNullOrEmpty(fileName))
+                 {
+                     ViewBag.Message = "Error: User data file not found.";
+                     return View("~/Views/Login/Index.cshtml");
+                 }
 
-            // Replace smart quotes with standard double quotes
-            return jsonContent
-                .Replace("“", "\"") // Left smart quote
-                .Replace("”", "\"") // Right smart quote
-                .Replace("‘", "'") // Left single quote
-                .Replace("’", "'"); // Right single quote
-        }
+                 var jsonContent = ExtractJsonFromWord(fileName);
+
+                 if (string.IsNullOrEmpty(jsonContent))
+                 {
+                     ViewBag.Message = "Error: Unable to extract user data.";
+                     return View("~/Views/Login/Index.cshtml");
+                 }
+
+                 jsonContent = SanitizeJson(jsonContent);
+
+                 var users = JsonSerializer.Deserialize<List<User>>(jsonContent);
+
+                 if (users == null)
+                 {
+                     ViewBag.Message = "Error: Unable to parse user data.";
+                     return View("~/Views/Login/Index.cshtml");
+                 }
+
+                 var matchingUser = users.FirstOrDefault(u =>
+                     u.Email.Trim().Equals(email.Trim(), StringComparison.OrdinalIgnoreCase) &&
+                     u.Password.Trim().Equals(password.Trim()));
+
+                 if (matchingUser == null)
+                 {
+                     ViewBag.Message = "Invalid email or password.";
+                     return View("~/Views/Login/Index.cshtml");
+                 }
+
+                 // Store the logged-in user's email in the session
+                 HttpContext.Session.SetString("LoggedInUser", matchingUser.Email);
+
+                 ViewBag.Names = matchingUser.Names ?? new List<string>();
+                 return View("~/Views/Home/Index.cshtml");
+             }
+             catch (Exception ex)
+             {
+                 ViewBag.Message = $"Error: {ex.Message}";
+                 return View("~/Views/Login/Index.cshtml");
+             }
+         }
 
 
-        public class User
-        {
-            [JsonPropertyName("email")]
-            public string Email { get; set; }
 
-            [JsonPropertyName("password")]
-            public string Password { get; set; }
+         public string SanitizeJson(string jsonContent)
+         {
+             if (string.IsNullOrEmpty(jsonContent)) return jsonContent;
 
-            [JsonPropertyName("names")]
-            public List<string> Names { get; set; }
-        }
+             // Replace smart quotes with standard double quotes
+             return jsonContent
+                 .Replace("“", "\"") // Left smart quote
+                 .Replace("”", "\"") // Right smart quote
+                 .Replace("‘", "'") // Left single quote
+                 .Replace("’", "'"); // Right single quote
+         }
 
-        public async Task<string> Meth()
-        {
-            // Load the credentials
-            var credential = GoogleCredential.FromFile(PathToServiceAccountKeyFiles)
-                .CreateScoped(DriveService.ScopeConstants.Drive);
 
-            // Create the Drive service
-            var service = new DriveService(new BaseClientService.Initializer
-            {
-                HttpClientInitializer = credential
-            });
+         public class User
+         {
+             [JsonPropertyName("email")]
+             public string Email { get; set; }
 
-            // Search for Google Docs in the specified directory
-            var request = service.Files.List();
-            request.Q = $"'{DirectoryId}' in parents"; // Specify the folder ID
-            var response = await request.ExecuteAsync();
+             [JsonPropertyName("password")]
+             public string Password { get; set; }
 
-            
+             [JsonPropertyName("names")]
+             public List<string> Names { get; set; }
+         }
 
-            // Export the first Google Docs file to `.docx` format if it exists
-            var googleDocFile = response.Files.FirstOrDefault(file => file.MimeType.Equals("application/vnd.google-apps.document"));
-            if (googleDocFile != null)
-            {
-                var exportRequest = service.Files.Export(googleDocFile.Id, "application/vnd.openxmlformats-officedocument.wordprocessingml.document");
-                var fileName = $"{googleDocFile.Name}.docx";
+         public async Task<string> Meth()
+         {
+             // Load the credentials
+             var credential = GoogleCredential.FromFile(PathToServiceAccountKeyFiles)
+                 .CreateScoped(DriveService.ScopeConstants.Drive);
 
-                await using var fileStream = new FileStream(fileName, FileMode.Create, FileAccess.Write);
-                await exportRequest.DownloadAsync(fileStream);
+             // Create the Drive service
+             var service = new DriveService(new BaseClientService.Initializer
+             {
+                 HttpClientInitializer = credential
+             });
 
-                // Return the file name
-                return fileName;
-            }
+             // Search for Google Docs in the specified directory
+             var request = service.Files.List();
+             request.Q = $"'{DirectoryId}' in parents"; // Specify the folder ID
+             var response = await request.ExecuteAsync();
 
-            return null;
-        }
 
-        public string ExtractJsonFromWord(string filePath)
-        {
-            using (WordprocessingDocument wordDoc = WordprocessingDocument.Open(filePath, false))
-            {
-                // Extract the text content from the Word document
-                var body = wordDoc.MainDocumentPart.Document.Body;
-                return body.InnerText; // Return the plain text content
-            }
-        }
+
+             // Export the first Google Docs file to `.docx` format if it exists
+             var googleDocFile = response.Files.FirstOrDefault(file => file.MimeType.Equals("application/vnd.google-apps.document"));
+             if (googleDocFile != null)
+             {
+                 var exportRequest = service.Files.Export(googleDocFile.Id, "application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+                 var fileName = $"{googleDocFile.Name}.docx";
+
+                 await using var fileStream = new FileStream(fileName, FileMode.Create, FileAccess.Write);
+                 await exportRequest.DownloadAsync(fileStream);
+
+                 // Return the file name
+                 return fileName;
+             }
+
+             return null;
+         }
+
+         public string ExtractJsonFromWord(string filePath)
+         {
+             using (WordprocessingDocument wordDoc = WordprocessingDocument.Open(filePath, false))
+             {
+                 // Extract the text content from the Word document
+                 var body = wordDoc.MainDocumentPart.Document.Body;
+                 return body.InnerText; // Return the plain text content
+             }
+         }*/
 
         public async Task<IActionResult> Index()
         {
-           /* try
+            // Get the logged-in user's email from the session
+            var loggedInUserEmail = HttpContext.Session.GetString("LoggedInUser");
+
+            if (string.IsNullOrEmpty(loggedInUserEmail))
             {
-                // Call the Meth method to list and download files
-                await Meth();
+                return RedirectToAction("Authenticate", "Authentication");
             }
-            catch (Exception ex)
+
+            // Fetch the logged-in user
+            var user = await _context.Users
+                .Include(u => u.UserFlows)
+                .ThenInclude(uf => uf.Flow)
+                .FirstOrDefaultAsync(u => u.Email == loggedInUserEmail);
+
+            if (user == null)
             {
-                ViewBag.Message = $"Error: {ex.Message}";
-            }*/
+                return RedirectToAction("Authenticate", "Authentication");
+            }
+
+            // Retrieve the names of the flows assigned to this user
+            var flowNames = user.UserFlows.Select(uf => uf.Flow.Name).ToList();
+
+            // Pass the flow names to the view using ViewBag
+            ViewBag.Names = flowNames;
 
             return View();
         }
+
 
 
         public IActionResult Privacy()

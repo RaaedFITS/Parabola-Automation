@@ -78,6 +78,7 @@ namespace Parabola_Automation.Controllers
         {
             HttpContext.Session.Clear(); // Clears all session data
             return RedirectToAction("Index", "Login"); // Redirect to the login page
+          
         }
 
     }
