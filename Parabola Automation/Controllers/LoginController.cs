@@ -74,6 +74,12 @@ namespace Parabola_Automation.Controllers
                 return builder.ToString();
             }
         }
+        public IActionResult Logout()
+        {
+            HttpContext.Session.Clear(); // Clears all session data
+            return RedirectToAction("Index", "Login"); // Redirect to the login page
+        }
 
     }
+
 }
