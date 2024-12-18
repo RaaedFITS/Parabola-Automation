@@ -6,10 +6,27 @@
 
 @if (TempData["Message"] != null)
 {
-    <div class="alert alert-info text-center">
+    var messageType = TempData["MessageType"] as string;
+    string alertClass = "alert-info"; // default if no MessageType provided
+
+    if (!string.IsNullOrEmpty(messageType))
+    {
+        if (messageType.Equals("error", StringComparison.OrdinalIgnoreCase))
+        {
+            alertClass = "alert-danger";
+        }
+        else if (messageType.Equals("success", StringComparison.OrdinalIgnoreCase))
+        {
+            alertClass = "alert-success";
+        }
+        // You could add more types as needed
+    }
+
+    <div class="alert @alertClass text-center">
         @TempData["Message"]
     </div>
 }
+
 
 <div class="container mt-5">
     <div class="d-flex justify-content-between align-items-center mb-4">

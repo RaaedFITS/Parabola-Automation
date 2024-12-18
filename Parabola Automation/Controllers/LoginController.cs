@@ -17,6 +17,7 @@ namespace Parabola_Automation.Controllers
 
         public IActionResult Index()
         {
+            System.Diagnostics.Debug.WriteLine("Starting");
             return View("~/Views/Login/Index.cshtml");
         }
 

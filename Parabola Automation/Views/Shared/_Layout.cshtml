@@ -24,13 +24,7 @@
                 </button>
                 <div class="collapse navbar-collapse" id="mainNavbar">
                     <ul class="navbar-nav me-auto mb-2 mb-sm-0">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                        @* Show Admin link if user is admin *@
+                      
                         @{
                             var userRole = ViewContext.HttpContext.Session.GetString("UserRole");
                             var loggedInUser = ViewContext.HttpContext.Session.GetString("LoggedInUser");

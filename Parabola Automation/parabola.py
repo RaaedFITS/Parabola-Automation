@@ -6,6 +6,8 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException, ElementClickInterceptedException
 import time
+import traceback
+
 
 if len(sys.argv) < 3:
     print("ERROR: Provide the flow name and file path as arguments.")
@@ -17,7 +19,7 @@ print(f"DEBUG: Flow name: {flow_name}, File path: {file_path}")
 
 options = webdriver.ChromeOptions()
 # Uncomment the next line for headless mode
-options.add_argument("--headless")
+#options.add_argument("--headless")
 options.add_argument("--disable-gpu")
 options.add_argument("--no-sandbox")
 options.add_argument("--disable-dev-shm-usage")
@@ -34,25 +36,58 @@ try:
     email_field = browser.find_element(By.XPATH, "//input[@placeholder='you@company.com']")
     password_field = browser.find_element(By.XPATH, "//input[@type='password']")
     login_button = browser.find_element(By.XPATH, "//button[contains(text(), 'Sign in')]")
-    email_field.send_keys("rbucksimiar@gmail.com")
-    password_field.send_keys("Raaed123#")
+    email_field.send_keys("itadmin@fitsexpress.com")
+    password_field.send_keys("W1KI2G{8Oo$/|(")
     login_button.click()
 
     print("DEBUG: Waiting for dashboard")
     time.sleep(5)
 
+    # Handle modal popups with payment error
+    try:
+        payment_modal_dismiss = WebDriverWait(browser, 10).until(
+            EC.element_to_be_clickable((By.XPATH, "//div[@class='modal-dismiss css-5kqtmx']"))
+        )
+        payment_modal_dismiss.click()
+        time.sleep(3)
+        print("DEBUG: Closed payment error modal using ActionChains.")
+    
+    except TimeoutException:
+        print("DEBUG: No payment error modal detected.")
+        
+
+
+
     print(f"DEBUG: Looking for flow '{flow_name}'")
     flow_link = WebDriverWait(browser, 30).until(
-        EC.element_to_be_clickable((By.XPATH, f"//a[text()='{flow_name}']"))
+        EC.element_to_be_clickable((By.XPATH, f"//a[contains(text(), '{flow_name}')]"))
     )
     flow_link.click()
     print(f"DEBUG: Flow '{flow_name}' opened")
-
-    # Locate the deepest interactive element
-    print("DEBUG: Locating the deeper inner element to click")
-    deepest_element = WebDriverWait(browser, 30).until(
-        EC.presence_of_element_located((By.XPATH, "//div[@class='css-1q4vvn7']"))
+      # Handle modal popups with payment error
+    try:
+        payment_modal_dismiss = WebDriverWait(browser, 10).until(
+            EC.element_to_be_clickable((By.XPATH, "//div[@class='modal-dismiss css-5kqtmx']"))
+        )
+        payment_modal_dismiss.click()
+        time.sleep(3)
+        print("DEBUG: Closed payment error modal using ActionChains.")
+    
+    except TimeoutException:
+        print("DEBUG: No payment error modal detected.")
+        
+    # Wait for the parent node that contains either "Pull from CSV file" or "Pull from Excel file"
+    print("DEBUG: Locating the specific node (CSV or Excel)")
+    parent_node = WebDriverWait(browser, 30).until(
+        EC.presence_of_element_located((By.XPATH, 
+            "//div[contains(@class,'react-flow__node-step') and "
+            "((.//div[text()='Pull from CSV file']) or (.//div[text()='Pull from Excel file']))]"
+        ))
     )
+
+    # Once we have the parent node, locate the deepest clickable element within it
+    print("DEBUG: Locating the deeper inner element to click within the node")
+    deepest_element = parent_node.find_element(By.XPATH, ".//div[@class='css-1q4vvn7']")
 
     print("DEBUG: Performing a single click on the deeper element")
     actions = ActionChains(browser)
@@ -64,6 +99,7 @@ try:
     actions.double_click(deepest_element).perform()
     print("DEBUG: Double-click completed")
     time.sleep(3)
+
 
     # Locate and upload file
     print("DEBUG: Locating the file upload input element")
@@ -114,8 +150,22 @@ try:
     )
     print("DEBUG: The 'Run Flow' button has returned to its initial state")
 
+except TimeoutException as te:
+    print("ERROR: A timeout occurred while waiting for an element.")
+    print(f"ERROR Details: {te}")
+    traceback.print_exc()
+except NoSuchElementException as nse:
+    print("ERROR: An element could not be found on the page.")
+    print(f"ERROR Details: {nse}")
+    traceback.print_exc()
+except WebDriverException as wde:
+    print("ERROR: A WebDriver related error occurred.")
+    print(f"ERROR Details: {wde}")
+    traceback.print_exc()
 except Exception as e:
-    print(f"ERROR: An unexpected error occurred: {e}")
+    print("ERROR: An unexpected error occurred.")
+    print(f"ERROR Details: {e}")
+    traceback.print_exc()
 finally:
     print("DEBUG: Closing the browser")
     browser.quit()
